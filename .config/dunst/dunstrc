@@ -1,0 +1,55 @@
+[global]
+    # Font matching Waybar
+    font = JetBrains Mono 12
+
+    # Allow a small icon
+    icon_theme = Adwaita
+    enable_recursive_icon_lookup = true
+
+    # Geometry: width x height - x_offset + y_offset
+    # Moves notifications to top-right, with similar margins to your Waybar
+    origin = top-right
+    offset = 10x50
+    width = 300
+    height = 100
+
+    # Look and Feel
+    transparency = 0
+    frame_width = 1
+    # White border to distinct from black wallpapers
+    frame_color = "#ffffff"
+    separator_color = frame
+    corner_radius = 10
+    
+    # Padding matching your Waybar style
+    padding = 12
+    horizontal_padding = 12
+    
+    # Text
+    markup = yes
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    ellipsize = middle
+    
+    # Progress bar
+    progress_bar = true
+    progress_bar_height = 10
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+
+[urgency_low]
+    background = "#000000"
+    foreground = "#888888"
+    frame_color = "#888888"
+
+[urgency_normal]
+    background = "#000000"
+    foreground = "#ffffff"
+    frame_color = "#ffffff"
+
+[urgency_critical]
+    background = "#333333"
+    foreground = "#ffffff"
+    frame_color = "#ff5555"

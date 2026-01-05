@@ -1,0 +1,97 @@
+* {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px; /* Reduced from 13px */
+    font-weight: bold;
+    min-height: 0;
+    border-radius: 10px;
+}
+
+window#waybar {
+    background-color: #000000;
+    color: #ffffff;
+    /* Removed border-bottom */
+    
+    /* Roundness and floating style */
+    border-radius: 10px;
+    margin-top: 5px; /* Adds space from top */
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#workspaces {
+    background-color: #000000;
+    margin: 0 4px;
+    border-radius: 10px;
+}
+
+#workspaces button {
+    padding: 0 4px; /* Reduced padding */
+    background-color: transparent;
+    color: #666666;
+    border: none;
+    border-radius: 10px; /* Rounded highlight on hover */
+    transition: all 0.2s ease;
+}
+
+#workspaces button.active {
+    color: #ffffff;
+}
+
+#workspaces button:hover {
+    color: #ffffff;
+    background: #222222;
+}
+
+#workspaces button.urgent {
+    color: #ffffff;
+    background-color: #333333;
+    border-radius: 10px;
+}
+
+#window {
+    color: #ffffff;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#tray {
+    padding: 0 8px; /* Reduced from 10px */
+    background-color: #000000;
+    color: #ffffff;
+    /* Removed border-left */
+}
+
+/* Add roundness to the last module on the right if needed, 
+   or the tray if it's last */
+#tray {
+    margin-right: 8px;
+}
+
+#clock {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Force monochrome alerts */
+#battery.warning,
+#battery.critical,
+#network.disconnected,
+#pulseaudio.muted {
+    color: #ffffff;
+    background-color: #333333;
+    border-radius: 10px;
+}
+
+tooltip {
+    background: #000000;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+}
+
+tooltip label {
+    color: #ffffff;
+}

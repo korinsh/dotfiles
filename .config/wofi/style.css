@@ -1,0 +1,57 @@
+* {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; /* Matched to Waybar */
+    font-weight: bold;
+}
+
+window {
+    margin: 0px;
+    padding: 0px;
+    border: 2px solid #ffffff; /* Kept your white border */
+    border-radius: 10px;       /* Added roundness */
+    background-color: #000000;
+}
+
+/* This is the fix for the bottom border covering issue.
+   It pushes the content inside away from the window edges. */
+#outer-box {
+    margin: 10px;
+}
+
+/* This removes the app icons */
+#img {
+    display: none;
+}
+
+#input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 2px solid #333333; /* Kept your gray border preference for input */
+    border-radius: 10px;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+#input:focus {
+    border: 2px solid #ffffff;
+}
+
+#inner-box {
+    background-color: #000000;
+}
+
+#entry {
+    padding: 5px;
+    border-radius: 5px;
+    color: #ffffff;
+    background-color: #000000;
+}
+
+#entry:selected {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#text:selected {
+    color: #000000;
+}
