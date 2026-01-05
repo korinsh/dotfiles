@@ -1,85 +1,85 @@
 #!/bin/bash
-# --- ROBUST DOTFILES INSTALLER ---
 
-# 1. Detect where this script is running from
-# This fixes the issue of hardcoded paths
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TARGET_WALLPAPER="$HOME/Pictures/wallpaper.png"
+# Define where the dotfiles are (Dynamic Path)
+DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONFIGS=("kitty" "waybar" "dunst" "hypr" "wofi" "fastfetch" "gtk-3.0" "gtk-4.0")
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${GREEN}Applying Dotfiles from: $SCRIPT_DIR${NC}"
+echo "=== STARTING INSTALLATION ==="
+echo "Source: $DOTFILES_DIR"
 
-# 2. Link Configs Safely
 mkdir -p "$HOME/.config"
 
+# 1. LINKING CONFIGS
 for tool in "${CONFIGS[@]}"; do
-    SOURCE="$SCRIPT_DIR/.config/$tool"
+    SOURCE="$DOTFILES_DIR/.config/$tool"
     TARGET="$HOME/.config/$tool"
 
-    # Only proceed if the config actually exists in the repo
-    if [ -d "$SOURCE" ]; then
-        # Check if target exists
-        if [ -d "$TARGET" ] || [ -L "$TARGET" ]; then
-            # If it's already a correct link, skip
-            CURRENT_LINK=$(readlink -f "$TARGET")
-            if [ "$CURRENT_LINK" == "$SOURCE" ]; then
-                echo "Skipping $tool (Already linked)"
-                continue
-            fi
-            
-            # Backup existing config just in case
-            mv "$TARGET" "${TARGET}.backup-$(date +%s)"
-            echo "Backed up old $tool config"
-        fi
+    # Check if Source exists in the repo
+    if [ ! -d "$SOURCE" ]; then
+        echo -e "${RED}[FAIL] $tool not found in dotfiles folder!${NC}"
+        continue
+    fi
 
-        # Create the Symlink
-        ln -sfn "$SOURCE" "$TARGET"
-        echo -e "Linked: ${GREEN}$tool${NC}"
+    # AGGRESSIVE LINKING
+    # 1. Remove whatever is currently at the target (Folder or Link)
+    rm -rf "$TARGET"
+    
+    # 2. Create the symlink
+    ln -s "$SOURCE" "$TARGET"
+
+    # 3. Verify
+    if [ -L "$TARGET" ]; then
+        echo -e "${GREEN}[OK] Linked $tool${NC}"
     else
-        echo -e "${RED}Error: Config for $tool not found in repo!${NC}"
+        echo -e "${RED}[FAIL] Could not link $tool${NC}"
     fi
 done
 
-# 3. Install Themes
-if [ -d "$SCRIPT_DIR/.themes" ]; then
-    mkdir -p "$HOME/.themes"
-    cp -r "$SCRIPT_DIR/.themes/"* "$HOME/.themes/" 2>/dev/null
-    echo "Installed Themes"
+# 2. THEMES & WALLPAPER
+echo "--- Installing Extras ---"
+mkdir -p "$HOME/.themes" "$HOME/Pictures"
+
+# Copy Themes
+if [ -d "$DOTFILES_DIR/.themes" ]; then
+    cp -r "$DOTFILES_DIR/.themes/"* "$HOME/.themes/" 2>/dev/null
+    echo "[OK] Themes Installed"
 fi
 
-# 4. Install Wallpaper
-mkdir -p "$HOME/Pictures"
-if [ -f "$SCRIPT_DIR/wallpapers/wallpaper.png" ]; then
-    cp "$SCRIPT_DIR/wallpapers/wallpaper.png" "$TARGET_WALLPAPER"
-    echo "Installed Wallpaper"
+# Copy Wallpaper
+if [ -f "$DOTFILES_DIR/wallpapers/wallpaper.png" ]; then
+    cp "$DOTFILES_DIR/wallpapers/wallpaper.png" "$HOME/Pictures/wallpaper.png"
+    echo "[OK] Wallpaper Installed"
 fi
 
-# 5. Fix Paths (Swaybg & Hyprlock)
-USER_HOME_ESCAPED=$(echo $HOME | sed 's/\//\\\//g')
-HYPRLOCK="$HOME/.config/hypr/hyprlock.conf"
+# 3. FIX HYPRLAND/HYPRLOCK PATHS
+echo "--- Fixing Paths ---"
 HYPRLAND="$HOME/.config/hypr/hyprland.conf"
+HYPRLOCK="$HOME/.config/hypr/hyprlock.conf"
+IMG_PATH="$HOME/Pictures/wallpaper.png"
 
-if [ -f "$HYPRLOCK" ]; then
-    sed -i "s/path = .*/path = $USER_HOME_ESCAPED\/Pictures\/wallpaper.png/g" "$HYPRLOCK"
-fi
-
+# We use perl for regex because sed can be annoying with paths
 if [ -f "$HYPRLAND" ]; then
-    sed -i "s|swaybg -i .* -m|swaybg -i $HOME/Pictures/wallpaper.png -m|g" "$HYPRLAND"
+    sed -i "s|swaybg -i .* -m|swaybg -i $IMG_PATH -m|g" "$HYPRLAND"
+    echo "[OK] Hyprland Config Updated"
+fi
+if [ -f "$HYPRLOCK" ]; then
+    sed -i "s|path = .*|path = $IMG_PATH|g" "$HYPRLOCK"
+    echo "[OK] Hyprlock Config Updated"
 fi
 
-# 6. Force Reload Services
-echo "Reloading services..."
+# 4. RESTART SERVICES
+echo "--- Restarting Services ---"
 killall dunst 2>/dev/null
 killall waybar 2>/dev/null
 
-# Start waybar in background
+# Start Waybar background
 waybar & disown
 
-# Send test notification (Restarts Dunst)
-notify-send "Config Applied" "Your system has been updated."
+# Send test notification
+notify-send "INSTALL COMPLETE" "Your dotfiles are active."
 
-echo -e "${GREEN}Installation Complete!${NC}"
+echo -e "${GREEN}=== DONE ===${NC}"
